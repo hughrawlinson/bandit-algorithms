@@ -1,0 +1,21 @@
+.container {
+	display: grid;
+	grid-template-columns: 1fr 800px 1fr;
+	grid-template-areas: "left head right"
+	                     "left main right";
+}
+
+.header {
+	grid-area: head;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.graphType {
+	grid-column: 2;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
