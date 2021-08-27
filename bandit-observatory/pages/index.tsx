@@ -57,8 +57,9 @@ function useBandit(
 }
 
 export default function Home() {
+  const chosenBanditAlgorithm = "softmax";
   const TITLE = "Bandit Observer";
-  const data = useBandit("softmax", "cumulativeReward");
+  const data = useBandit(chosenBanditAlgorithm, "cumulativeReward");
 
   return (
     <div className={styles.container}>
@@ -72,12 +73,41 @@ export default function Home() {
         <h1>{TITLE}</h1>
       </header>
       <article className={styles.graphType}>
+        <h3 className={styles.todo}>Todo</h3>
+        <ul>
+          <li>Algorithm selector</li>
+          <li>Restart games, playback</li>
+          <li>Managing Algorithm params</li>
+        </ul>
+      </article>
+      <article className={styles.graphType}>
+        <h2 className={styles.todo}>
+          Accuracy of the {chosenBanditAlgorithm} bandit algorithm
+        </h2>
+        <p>
+          The odds that our algorithm selects the best arm at any given point in
+          time.
+        </p>
+      </article>
+      <article className={styles.graphType}>
+        <h2 className={styles.todo}>
+          Performance of the {chosenBanditAlgorithm} bandit algorithm
+        </h2>
+        <p>
+          Look at the average reward that our algorithm receives on each trial.
+        </p>
+      </article>
+      <article className={styles.graphType}>
         <h2>Cumulative Reward</h2>
+        <p>
+          The total reward that an algorithm has won for us up until some fixed
+          point in time.
+        </p>
         <Line
           data={data}
-          height={500}
-          width={(500 * 16) / 9}
-          margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+          height={800 * (9 / 16)}
+          width={800}
+          margin={{ top: 50, right: 60, bottom: 50, left: 60 }}
           animate={true}
           enableSlices="x"
           axisBottom={{
