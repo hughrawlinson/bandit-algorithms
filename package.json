@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx jest",
-    "netlifydeploy": "npx jest && npm run build --workspaces bandit-observatory"
+    "netlifydeploy": "npx jest && npm run --workspace bandit-observatory build"
   },
   "keywords": [],
   "author": "",
