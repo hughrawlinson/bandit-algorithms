@@ -8,7 +8,8 @@ import * as softmaxBanditTestResultData from "../../results/softmax.json";
 interface TrialResult {
   chosenArm: ArmName;
   reward: number;
-  cumulativeReward: number;
+  cumulativeRewards: number;
+  averageRewards: number;
 }
 
 function prepareData(data: typeof epsilonGreedyBanditTestResultData) {
@@ -30,7 +31,8 @@ function prepareData(data: typeof epsilonGreedyBanditTestResultData) {
       sim.trials[j] = {
         chosenArm: data.chosenArms[i * horizon + j] as ArmName,
         reward: data.rewards[i * horizon + j],
-        cumulativeReward: data.cumulativeRewards[i * horizon + j],
+        cumulativeRewards: data.cumulativeRewards[i * horizon + j],
+        averageRewards: data.averageRewards[i * horizon + j],
       };
     }
     sims[i] = sim;
@@ -40,7 +42,7 @@ function prepareData(data: typeof epsilonGreedyBanditTestResultData) {
 
 function useBandit(
   model: "epsilon-greedy" | "softmax",
-  metric: "reward" | "cumulativeReward"
+  metric: "reward" | "cumulativeRewards" | "averageRewards"
 ) {
   const selectedModel =
     model === "softmax"
@@ -57,9 +59,13 @@ function useBandit(
 }
 
 export default function Home() {
-  const chosenBanditAlgorithm = "softmax";
+  const chosenBanditAlgorithm = "epsilon-greedy";
   const TITLE = "Bandit Observer";
-  const data = useBandit(chosenBanditAlgorithm, "cumulativeReward");
+  const cumulativeRewardData = useBandit(
+    chosenBanditAlgorithm,
+    "cumulativeRewards"
+  );
+  const averageRewardData = useBandit(chosenBanditAlgorithm, "averageRewards");
 
   return (
     <div className={styles.container}>
@@ -90,12 +96,25 @@ export default function Home() {
         </p>
       </article>
       <article className={styles.graphType}>
-        <h2 className={styles.todo}>
-          Performance of the {chosenBanditAlgorithm} bandit algorithm
-        </h2>
+        <h2>Performance of the {chosenBanditAlgorithm} bandit algorithm</h2>
         <p>
           Look at the average reward that our algorithm receives on each trial.
         </p>
+        <Line
+          data={averageRewardData}
+          height={800 * (9 / 16)}
+          width={800}
+          margin={{ top: 50, right: 60, bottom: 50, left: 60 }}
+          animate={true}
+          enableSlices="x"
+          axisBottom={{
+            tickValues: new Array(
+              Math.ceil(averageRewardData[0].data.length / 25)
+            )
+              .fill(0)
+              .map((_, index) => index * 25),
+          }}
+        />
       </article>
       <article className={styles.graphType}>
         <h2>Cumulative Reward</h2>
@@ -104,18 +123,20 @@ export default function Home() {
           point in time.
         </p>
         <Line
-          data={data}
+          data={cumulativeRewardData}
           height={800 * (9 / 16)}
           width={800}
           margin={{ top: 50, right: 60, bottom: 50, left: 60 }}
           animate={true}
           enableSlices="x"
           axisBottom={{
-            tickValues: new Array(Math.ceil(data[0].data.length / 25))
+            tickValues: new Array(
+              Math.ceil(cumulativeRewardData[0].data.length / 25)
+            )
               .fill(0)
               .map((_, index) => index * 25),
           }}
-        ></Line>
+        />
       </article>
     </div>
   );

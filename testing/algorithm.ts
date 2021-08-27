@@ -2,8 +2,8 @@ import { ArmName, Bandit } from "../bandits";
 import { Arm } from "../arms";
 
 export type NamedArm = ArmName & {
-  arm: Arm
-}
+  arm: Arm;
+};
 
 interface TestResult {
   simNums: number[];
@@ -11,32 +11,44 @@ interface TestResult {
   chosenArms: ArmName[];
   rewards: number[];
   cumulativeRewards: number[];
+  averageRewards: number[];
 }
 
-export function testAlgorithm(algorithm: Bandit, arms: NamedArm[], numSims: number, horizon: number): TestResult {
+export function testAlgorithm(
+  algorithm: Bandit,
+  arms: NamedArm[],
+  numSims: number,
+  horizon: number
+): TestResult {
   const numDraws = numSims * horizon;
   let chosenArms: ArmName[] = new Array(numDraws).fill(0);
   let rewards = new Array(numDraws).fill(0);
   let cumulativeRewards = new Array(numDraws).fill(0);
+  let averageRewards = new Array(numDraws).fill(0);
   let simNums = new Array(numDraws).fill(0);
   let times = new Array(numDraws).fill(0);
 
   for (let sim = 0; sim < numSims; sim++) {
     algorithm.initialize(arms);
-    
+
     for (let t = 0; t < horizon; t++) {
       let index = sim * horizon + t;
       simNums[index] = sim;
       times[index] = t;
       chosenArms[index] = algorithm.selectArm();
 
-      const reward = arms.find(arm => arm.name === chosenArms[index].name)!.arm.draw();
+      const reward = arms
+        .find((arm) => arm.name === chosenArms[index].name)!
+        .arm.draw();
       rewards[index] = reward;
 
       if (t === 0) {
         cumulativeRewards[index] = reward;
+        averageRewards[index] = reward;
       } else {
         cumulativeRewards[index] = cumulativeRewards[index - 1] + reward;
+        averageRewards[index] =
+          ((t - 1) / t) * averageRewards[index - 1] + (1 / t) * reward;
       }
 
       algorithm.update(chosenArms[index], reward);
@@ -48,6 +60,7 @@ export function testAlgorithm(algorithm: Bandit, arms: NamedArm[], numSims: numb
     times,
     chosenArms,
     rewards,
-    cumulativeRewards
-  }
+    cumulativeRewards,
+    averageRewards,
+  };
 }

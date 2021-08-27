@@ -1,7 +1,7 @@
-import { Arm, BernoulliArm } from "../arms";
+import { BernoulliArm } from "../arms";
 import { EpsilonGreedy } from "../bandits";
 import { writeFileSync } from "fs";
-import { NamedArm, shuffle, testAlgorithm } from "../testing";
+import { NamedArm, testAlgorithm } from "../testing";
 
 describe("EpsilonGreedy", () => {
   it("should return a valid probability distribution", () => {
@@ -15,7 +15,7 @@ describe("EpsilonGreedy", () => {
 
     const epsilonGreedy = new EpsilonGreedy(0.1);
 
-    const testResult = testAlgorithm(epsilonGreedy, arms, 3, 250);
+    const testResult = testAlgorithm(epsilonGreedy, arms, 5, 350);
 
     writeFileSync(
       "results/epsilon-greedy.json",

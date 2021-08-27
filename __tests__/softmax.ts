@@ -15,7 +15,7 @@ describe("SoftMax", () => {
 
     const softmax = new Softmax(0.1);
 
-    const testResult = testAlgorithm(softmax, arms, 3, 250);
+    const testResult = testAlgorithm(softmax, arms, 5, 350);
 
     writeFileSync("results/softmax.json", JSON.stringify(testResult, null, 2));
   });
